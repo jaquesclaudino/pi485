@@ -119,14 +119,21 @@ void Rs485::open(unsigned int baudRate, unsigned int gpioDE) {
         exit(10);
     }
 
-    speed_t speed = getBaudrateSpeed(baudRate);    
-    struct termios options;
+    //CONFIGURE THE UART
+    //The flags (defined in /usr/include/termios.h - see http://pubs.opengroup.org/onlinepubs/007908799/xsh/termios.h.html):
+    //CSIZE:- CS5, CS6, CS7, CS8
+    //CLOCAL - Ignore modem status lines
+    //CREAD - Enable receiver
+    //IGNPAR = Ignore characters with parity errors
+    //ICRNL - Map CR to NL on input (Use for ASCII comms where you want to auto correct end of line characters - don't use for bianry comm
+    //PARENB - Parity enable
+    //PARODD - Odd parity (else even)
+    struct termios options; 
     tcgetattr(fd, &options);
-    cfsetispeed(&options, speed);
-    cfsetospeed(&options, speed);
-    options.c_cflag = speed | CS8 | CLOCAL | CREAD;
-    options.c_iflag = IGNPAR | ICRNL;
-    options.c_oflag = 0;
+    options.c_cflag = getBaudrateSpeed(baudRate) | CS8 | CLOCAL | CREAD;
+    options.c_iflag = IGNPAR;
+    options.c_oflag = 0;  
+    options.c_lflag = 0;  
     tcflush(fd, TCIFLUSH);
     tcsetattr(fd, TCSANOW, &options);
 
@@ -136,7 +143,36 @@ void Rs485::open(unsigned int baudRate, unsigned int gpioDE) {
     GPIO_CLR = 1 << gpioDE;
 }
 
+void Rs485::close() {
+    if (!fd) {
+        printf("uart closed\n");
+        return;
+    }
+    ::close(fd);
+    fd = 0;
+}
+
+void Rs485::clear() {
+    if (!fd) {
+        printf("uart closed\n");
+        return;
+    }    
+    
+    unsigned char bufferRx[256];
+    int available;
+    
+    //discard all rx data:
+    do {
+        available = ::read(fd, bufferRx, 255);
+    } while (available == 255);
+}
+
 void Rs485::write(unsigned char* bufferTx, unsigned int length) {
+    if (!fd) {
+        printf("uart closed\n");
+        return;
+    }
+    
     // tx mode:
     GPIO_SET = 1 << gpioDE;
     
@@ -158,12 +194,16 @@ void Rs485::write(unsigned char* bufferTx, unsigned int length) {
 }
 
 unsigned int Rs485::read(unsigned char* bufferRx, unsigned int lengthExpected, unsigned int millisTimeout) {
+    if (!fd) {
+        printf("uart closed\n");
+        return 0;
+    }
     unsigned char bufferTmp[256];
     unsigned int millisCount = 0;
     unsigned int indexRx = 0;    
     
     while (millisCount < millisTimeout) {
-        int available = ::read(fd, (void*) bufferTmp, 255);
+        int available = ::read(fd, bufferTmp, 255);
         if (available > 0) {
             //printf("read available %d \n", available);
             for (unsigned int i = 0; i < available; i++) {
@@ -182,9 +222,4 @@ unsigned int Rs485::read(unsigned char* bufferRx, unsigned int lengthExpected, u
         }
     }
     return indexRx;
-}
-
-void Rs485::flush() {
-    unsigned char bufferRx[256];
-    ::read(fd, bufferRx, 255);
 }

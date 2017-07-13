@@ -17,6 +17,22 @@ JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_open
 
 /*
  * Class:     com_nexten_pi485_Pi485
+ * Method:    close
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_close
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_nexten_pi485_Pi485
+ * Method:    clear
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_clear
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_nexten_pi485_Pi485
  * Method:    write
  * Signature: ([I)V
  */

@@ -10,6 +10,16 @@ JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_open(JNIEnv *env, jobject thi
     rs485.open(baudRate, gpioDE);
 }
 
+JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_close(JNIEnv *env, jobject thisObj) {
+    //printf("Closing com port...\n");    
+    rs485.close();
+}
+
+JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_clear(JNIEnv *env, jobject thisObj) {
+    //printf("Discarding rx data...\n");    
+    rs485.clear();
+}
+
 JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_write(JNIEnv *env, jobject thisObj, jintArray buffer) {
     int length = env->GetArrayLength(buffer);
     int* arr = env->GetIntArrayElements(buffer, NULL);
@@ -21,10 +31,7 @@ JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_write(JNIEnv *env, jobject th
         //printf("%d;", bufferTx[i]);
     }
     //printf("\n");
-    
-    //discard old rx data:
-    rs485.flush();
-    
+       
     rs485.write(bufferTx, length);
 }
 
