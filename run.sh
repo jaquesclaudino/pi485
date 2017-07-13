@@ -1,0 +1,1 @@
+sudo java -classpath ./target/pi485-0.0.1.jar -Djava.library.path=./lib com.nexten.pi485.Pi485 19200 12 -1 1000 12 1 0 4 223
