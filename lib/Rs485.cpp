@@ -17,8 +17,15 @@
 
 // Access from ARM Running Linux
 
+// pi1:
 //#define BCM2708_PERI_BASE 0x20000000
-#define BCM2708_PERI_BASE   0x3F000000
+
+// pi2 e pi3:
+//#define BCM2708_PERI_BASE   0x3F000000
+
+// pi4:
+#define BCM2708_PERI_BASE   0xFE000000
+
 #define UART_BASE   (BCM2708_PERI_BASE + 0x201000)
 #define GPIO_BASE   (BCM2708_PERI_BASE + 0x200000)
 
@@ -175,6 +182,10 @@ void Rs485::write(unsigned char* bufferTx, unsigned int length) {
     
     // tx mode:
     GPIO_SET = 1 << gpioDE;
+    
+    // obs1: observado no osciloscopio que sem delay, o sinal de enable era habilitado um pouco depois do envio dos dados.
+    // obs2: nao houve alteracao na quantidade de erroCrc e timeout com o delay habilitado.
+    //msleep(1);
     
     int count = ::write(fd, bufferTx, length);
     if (count < 0) {

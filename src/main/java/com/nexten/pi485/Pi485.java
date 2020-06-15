@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  */
 public class Pi485 {
 
-    private static final String VERSION = "0.0.1";
+    private static final String VERSION = "0.0.2";
     private static final Logger LOG = Logger.getLogger(Pi485.class.getName());
 
     public Pi485() throws Exception {
