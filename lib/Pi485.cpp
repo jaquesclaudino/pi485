@@ -58,3 +58,15 @@ JNIEXPORT jintArray JNICALL Java_com_nexten_pi485_Pi485_read(JNIEnv *env, jobjec
     env->SetIntArrayRegion(result, 0, size, fill);
     return result;
 }
+
+JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_setPiVersion(JNIEnv *env, jobject thisObj, jint piVersion) {
+    rs485.setPiVersion(piVersion);
+}
+
+JNIEXPORT jint JNICALL Java_com_nexten_pi485_Pi485_getPiVersion(JNIEnv *env, jobject thisObj) {
+    return rs485.getPiVersion();
+}
+
+JNIEXPORT jstring JNICALL Java_com_nexten_pi485_Pi485_getLibVersion(JNIEnv *env, jobject thisObj) {
+    return env->NewStringUTF(Rs485::LIBVERSION);
+}

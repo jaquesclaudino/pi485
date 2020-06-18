@@ -15,19 +15,7 @@
 #include <sys/mman.h>
 #include <sys/time.h>
 
-// Access from ARM Running Linux
-
-// pi1:
-//#define BCM2708_PERI_BASE 0x20000000
-
-// pi2 e pi3:
-//#define BCM2708_PERI_BASE   0x3F000000
-
-// pi4:
-#define BCM2708_PERI_BASE   0xFE000000
-
-#define UART_BASE   (BCM2708_PERI_BASE + 0x201000)
-#define GPIO_BASE   (BCM2708_PERI_BASE + 0x200000)
+#define DEFAULT_PI_VERSION 3
 
 #define PAGE_SIZE   (4*1024)
 #define BLOCK_SIZE  (4*1024)
@@ -116,9 +104,17 @@ speed_t getBaudrateSpeed(unsigned int baudRate) {
 
 void Rs485::open(unsigned int baudRate, unsigned int gpioDE) {
     this->gpioDE = gpioDE;
+
+    if (!piVersion) {
+        piVersion = DEFAULT_PI_VERSION;
+    }
     
-    uart = map_peripheral(UART_BASE);
-    gpio = map_peripheral(GPIO_BASE);
+    unsigned int periBase = getBcmPeripheralBase(piVersion);
+    unsigned int uartBase = periBase + 0x201000;
+    unsigned int gpioBase = periBase + 0x200000;
+    
+    uart = map_peripheral(uartBase);
+    gpio = map_peripheral(gpioBase);
 
     fd = ::open("/dev/ttyAMA0", O_RDWR | O_NONBLOCK);
     if (!fd) {
@@ -233,4 +229,26 @@ unsigned int Rs485::read(unsigned char* bufferRx, unsigned int lengthExpected, u
         }
     }
     return indexRx;
+}
+
+unsigned int Rs485::getBcmPeripheralBase(unsigned int piVersion) {
+    switch (piVersion) {
+        // raspberry pi 1:
+        case 1: return 0x20000000;
+
+        // raspberry pi 2 and 3:
+        case 2:
+        case 3: return 0x3F000000;
+        
+        // raspberry pi 4:
+        default: return 0xFE000000;
+    }
+}
+
+void Rs485::setPiVersion(unsigned int piVersion) {
+    this->piVersion = piVersion;
+}
+
+unsigned int Rs485::getPiVersion() {
+    return piVersion;
 }

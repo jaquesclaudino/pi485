@@ -17,7 +17,7 @@ Pi485.o : Pi485.cpp Pi485.h
 
 Pi485.h : 
 #	/usr/java/latest/bin/javah -classpath ../target/classes -o $@ com.nexten.pi485.Pi485
-	javah -classpath ../target/classes -o $@ com.nexten.pi485.Pi485
+	/opt/jdk1.8.0_241/bin/javah -classpath ../target/classes -o $@ com.nexten.pi485.Pi485
 
 Rs485.o : Rs485.cpp
 	gcc -c $< -o $@

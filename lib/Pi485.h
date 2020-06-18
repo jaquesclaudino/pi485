@@ -47,6 +47,30 @@ JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_write
 JNIEXPORT jintArray JNICALL Java_com_nexten_pi485_Pi485_read
   (JNIEnv *, jobject, jint, jint);
 
+/*
+ * Class:     com_nexten_pi485_Pi485
+ * Method:    setPiVersion
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_nexten_pi485_Pi485_setPiVersion
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_nexten_pi485_Pi485
+ * Method:    getPiVersion
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_nexten_pi485_Pi485_getPiVersion
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_nexten_pi485_Pi485
+ * Method:    getLibVersion
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_nexten_pi485_Pi485_getLibVersion
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

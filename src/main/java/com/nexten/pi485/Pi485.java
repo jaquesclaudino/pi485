@@ -10,15 +10,16 @@ import java.util.logging.Logger;
  */
 public class Pi485 {
 
-    private static final String VERSION = "0.0.2";
     private static final Logger LOG = Logger.getLogger(Pi485.class.getName());
-
+    
     public Pi485() throws Exception {
         try {
+            LOG.log(Level.INFO, "Library pi485 loading...");
+            
             // Load native library libpi485.so (Unix) or pi485.dll (Windows):
             System.loadLibrary("pi485"); 
-            
-            LOG.log(Level.INFO, "Library pi485-{0} successful loaded", VERSION);
+
+            LOG.log(Level.INFO, "Library pi485 loaded successfully");
             
         } catch (Error ex) {
             String msg = "Error loading pi485 library";
@@ -32,6 +33,9 @@ public class Pi485 {
     public native void clear();
     public native void write(int[] buffer);
     public native int[] read(int lengthExpected, int timeout);
+    public native void setPiVersion(int piVersion);
+    public native int getPiVersion();
+    public native String getLibVersion();
 
     /**
      * Method used to test from command line.
